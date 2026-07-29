@@ -81,6 +81,31 @@ The unit of work is a **weekly cycle**. One pass:
               (stops are never silent — a handoff report always ships)
 ```
 
+### What a run produces — views, not an interface
+
+Every run terminates into one `AgentRunResult`: the verdict, the evidence it rests on, the weekly history, and the journal events. Everything readable afterwards is a **rendering** of that object.
+
+```
+                      Agent runtime
+              (decide → verify → act → observe)
+                            │
+                      AgentRunResult
+              verdict · evidence · history · events
+                            │
+        ┌───────────────────┼───────────────────┐
+        ▼                   ▼                   ▼
+     Console            Markdown              JSONL
+    narration      reports/agent_run.md  logs/agent_journal.jsonl
+                                                │
+                                                ▼
+                                      HTML view · MCP server
+                                       (named, not built)
+```
+
+The Markdown report is **not** the agent's interface — it is one view, and a deliberately thin one. The journal is the audit trail: one JSON object per decision, rejection, weekly report, safety override and human approval. A test asserts the views cannot drift from the result, so adding a renderer cannot change what the agent decided.
+
+`HTML view · MCP server` sits here the way `v3 · Platform` sits on the maturity ladder: the seam exists and the shape is obvious, which is precisely why building it now would be growing sideways.
+
 ### The action space and its preconditions
 
 The brain — heuristic by default, optionally an LLM — can only propose from this table. The verifier owns the right-hand column; the brain cannot negotiate it.
@@ -196,7 +221,8 @@ The tunables are the product decisions — change one, rerun, and watch the syst
 - [run_v0_engine.py](run_v0_engine.py) · [run_v1_product_ops.py](run_v1_product_ops.py) · [run_v2_agent.py](run_v2_agent.py) — one entry point per maturity level
 - [engine/](engine/) — data · detect · decide (cage, baseline, ranker, guardrails) · simulate
 - [pm_ops/](pm_ops/) — data · audit · experiment · readout
-- [agent/](agent/) — world · memory · verifier · brain · loop
+- [agent/](agent/) — world · memory · verifier · brain · loop (`AgentRunResult` + Markdown renderer)
+- [tests/](tests/) — seeded smoke checks: pre-committed verdicts and view/result consistency
 - [docs/](docs/) — architecture.svg (v0) · architecture_v2.svg (v2) · maturity_ladder.svg
 - `reports/`, `logs/`, `data/` — generated on run
 

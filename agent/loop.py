@@ -11,7 +11,14 @@ Termination (all three kinds, explicit):
 Human-in-the-loop is a first-class node: escalations go to an inbox; in this
 demo the human review is SIMULATED with a 2-week latency and an approval to
 resume at a reduced share. The agent cannot approve itself - verifier-enforced.
+
+Every run terminates into an `AgentRunResult`. The console narration, the
+Markdown report and any later view are RENDERERS over that object, while the
+append-only journal stays the audit trail. No single rendering is the agent's
+interface - which is why adding one cannot change what the agent decided.
 """
+
+from dataclasses import dataclass, field
 
 from .brain import make_brain
 from .memory import Memory
@@ -20,6 +27,56 @@ from .world import World
 
 MAX_WEEKS = 14
 REVIEW_LATENCY = 2   # weeks until the simulated human answers an escalation
+REPORT_PATH = "reports/agent_run.md"
+
+
+@dataclass
+class AgentRunResult:
+    """One run's terminal state, structured.
+
+    Holds the verdict plus the evidence it rests on, the weekly history and
+    the journal events. Views read this; none of them owns it.
+    """
+
+    verdict: str
+    weeks: int
+    budget_exhausted: bool
+    lift_pts: float | None
+    engine: tuple[int, int]
+    rules: tuple[int, int]
+    gate_contexts: list[str]
+    incidents: list[dict]
+    events: list[dict]
+    history: list[dict]
+    journal_path: str
+    handoff: str | None = None
+    report_path: str = REPORT_PATH
+
+
+def render_markdown(result: AgentRunResult) -> str:
+    """The Markdown view of a run - one representation, not the interface."""
+    weeks = f"{result.weeks}{' (budget exhausted)' if result.budget_exhausted else ''}"
+    lines = ["# Agent run - final recommendation", "", f"- Weeks: {weeks}"]
+    if result.lift_pts is not None:
+        er, en = result.engine
+        rr, rn = result.rules
+        lines.append(f"- Evidence (live, ex-incident weeks): engine {er}/{en} vs "
+                     f"rules {rr}/{rn} -> lift {result.lift_pts:+.1f} pts")
+    else:
+        lines.append("- Evidence: no clean live weeks")
+    lines.append(f"- Gated contexts: {', '.join(result.gate_contexts) or 'none'}")
+    if result.incidents:
+        detail = "; ".join(f"week {i['week']} - {i['what']}" for i in result.incidents)
+        lines.append(f"- Incidents: {detail} "
+                     "(kill switch fired, human approved resume)")
+    else:
+        lines.append("- Incidents: none")
+    if result.handoff:
+        lines.append(f"- Handoff: {result.handoff}")
+    lines += [f"- Recommendation: **{result.verdict}**", "",
+              "Every decision, rejection, override and approval: "
+              f"{result.journal_path}"]
+    return "\n".join(lines)
 
 
 def run(brain_kind="heuristic", journal_path="logs/agent_journal.jsonl", quiet=False):
@@ -123,8 +180,10 @@ def run(brain_kind="heuristic", journal_path="logs/agent_journal.jsonl", quiet=F
         # escalation SLA: do not wait forever
         if mem.summary["open_escalation"] and pending_review \
                 and world.week - pending_review[0] > REVIEW_LATENCY + 3:
-            outcome = "HANDOFF: escalation unanswered past SLA - stopping, journal attached"
-            say(f"    {outcome}")
+            say("    HANDOFF: escalation unanswered past SLA - stopping, "
+                "journal attached")
+            outcome = _final(world, mem, say,
+                             handoff="escalation unanswered past SLA")
 
     if outcome is None:
         outcome = _final(world, mem, say, budget_exhausted=True)
@@ -132,32 +191,26 @@ def run(brain_kind="heuristic", journal_path="logs/agent_journal.jsonl", quiet=F
     return outcome
 
 
-def _final(world, mem, say, budget_exhausted=False):
+def _final(world, mem, say, budget_exhausted=False, handoff=None):
     s = mem.summary
     cum = world.cumulative_live(exclude_weeks=[i["week"] for i in s["incidents"]])
-    er, en = cum["engine"]
-    rr, rn = cum["rules"]
+    _, en = cum["engine"]
     verdict = ("SHIP for gated contexts, continue ramp under guardrails"
                if (cum["lift_pts"] or 0) > 0 and s["gate_contexts"]
                else "SHIP THE TABLE - engine did not buy its way in")
-    lines = [
-        "# Agent run - final recommendation", "",
-        f"- Weeks: {world.week}{' (budget exhausted)' if budget_exhausted else ''}",
-        f"- Evidence (live, ex-incident weeks): engine {er}/{en} vs rules {rr}/{rn} "
-        f"-> lift {cum['lift_pts']:+.1f} pts" if cum["lift_pts"] is not None else
-        "- Evidence: no clean live weeks",
-        f"- Gated contexts: {', '.join(s['gate_contexts']) or 'none'}",
-        f"- Incidents: {s['incidents'] or 'none'} (kill switch fired, human approved resume)"
-        if s["incidents"] else "- Incidents: none",
-        f"- Recommendation: **{verdict}**", "",
-        "Every decision, rejection, override and approval: logs/agent_journal.jsonl",
-    ]
-    with open("reports/agent_run.md", "w") as f:
-        f.write("\n".join(lines))
-    lift_str = (f"{cum['lift_pts']:+.1f} pts on n={en}"
-                if cum["lift_pts"] is not None else "n/a (no clean live weeks)")
+    result = AgentRunResult(
+        verdict=verdict, weeks=world.week, budget_exhausted=budget_exhausted,
+        lift_pts=cum["lift_pts"], engine=cum["engine"], rules=cum["rules"],
+        gate_contexts=list(s["gate_contexts"]), incidents=list(s["incidents"]),
+        events=mem.events, history=world.history,
+        journal_path=mem.journal_path, handoff=handoff,
+    )
+    with open(result.report_path, "w") as f:
+        f.write(render_markdown(result))
+    lift_line = (f"{cum['lift_pts']:+.1f} pts on n={en}"
+                 if cum["lift_pts"] is not None else "n/a (no clean live weeks)")
     say(f"\n[FINAL] {verdict}")
-    say(f"    evidence ex-incident: lift {lift_str} | "
+    say(f"    evidence ex-incident: lift {lift_line} | "
         f"gates: {len(s['gate_contexts'])} | incidents: {len(s['incidents'])}")
-    say("    full report: reports/agent_run.md")
-    return verdict
+    say(f"    full report: {result.report_path}")
+    return result

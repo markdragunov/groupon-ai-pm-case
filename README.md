@@ -40,11 +40,9 @@ Each run is seeded, needs nothing installed, finishes in seconds, and writes its
 
 **v0 — the engine.** A failed payment enters the deterministic cage: `SAFETY_RULES` defines the permitted actions for its decline context (do-not-retry list, no retry on unresolved timeouts, money-state from the ledger). Inside the cage, two competitors rank the permitted set: a rules lookup table that serves by default, and a bandit that may disagree only after clearing an evidence gate. Every outcome becomes a label; fraud tripwires auto-revert serving to rules.
 
-![v0 architecture](docs/architecture.svg)
 
 **v2 — the agent.** The same cage, one level up. The agent replaces the human *operator* of the rollout — never the engine. Its only lever is the serving mode (baseline / shadow / live-at-share / frozen); safety rules are untouchable by anything that learns. A verifier gates every move, safety overrides fire regardless of the brain, and resuming after a kill requires a human approval the agent cannot forge.
 
-![v2 architecture](docs/architecture_v2.svg)
 
 ## How the agent operates
 

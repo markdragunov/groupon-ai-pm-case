@@ -44,7 +44,8 @@ def run(brain_kind="heuristic", journal_path="logs/agent_journal.jsonl", quiet=F
         mem.log("decision", week=world.week + 1, action=action, params=params,
                 why=decision.get("why", ""), accepted=ok, reject_reason=reason)
 
-        line = f"W{world.week+1:02d} [{s['mode']}{'' if not s['share'] else f' {s['share']:.0%}'}] brain→{action}"
+        share_suffix = f" {s['share']:.0%}" if s['share'] else ''
+        line = f"W{world.week+1:02d} [{s['mode']}{share_suffix}] brain→{action}"
         if not ok:
             say(f"{line}  ✗ verifier: {reason}")
             mem.note_rejection(action, reason)

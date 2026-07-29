@@ -154,8 +154,10 @@ def _final(world, mem, say, budget_exhausted=False):
     ]
     with open("reports/agent_run.md", "w") as f:
         f.write("\n".join(lines))
+    lift_str = (f"{cum['lift_pts']:+.1f} pts on n={en}"
+                if cum["lift_pts"] is not None else "n/a (no clean live weeks)")
     say(f"\n[FINAL] {verdict}")
-    say(f"    evidence ex-incident: lift {cum['lift_pts']:+.1f} pts on n={en} | "
+    say(f"    evidence ex-incident: lift {lift_str} | "
         f"gates: {len(s['gate_contexts'])} | incidents: {len(s['incidents'])}")
     say("    full report: reports/agent_run.md")
     return verdict

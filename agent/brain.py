@@ -22,6 +22,7 @@ Bounded agent action space (the cage, one level up):
 
 import json
 import os
+import re
 import urllib.request
 
 ACTION_SPACE = ["instrument", "start_shadow", "ramp", "freeze",
@@ -89,7 +90,10 @@ class ClaudeBrain:
             with urllib.request.urlopen(req, timeout=30) as r:
                 data = json.loads(r.read())
             text = "".join(b.get("text", "") for b in data.get("content", []))
-            out = json.loads(text.strip().removeprefix("```json").removesuffix("```"))
+            m = re.search(r"\{.*\}", text, re.S)   # first JSON object, fences/prose-tolerant
+            if not m:
+                raise ValueError("no JSON object in response")
+            out = json.loads(m.group(0))
             if out.get("action") not in ACTION_SPACE:
                 raise ValueError(f"action outside the space: {out.get('action')}")
             return out

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Deterministic smoke checks for seeded demo outputs."""
 
-import io
+import json
+import os
 import subprocess
 import sys
 import unittest
@@ -32,6 +33,23 @@ class SmokeTest(unittest.TestCase):
         out = run_script("run_v2_agent.py")
         self.assertIn("SHIP for gated contexts", out)
         self.assertIn("reports/agent_run.md", out)
+
+    def test_v2_views_agree_with_result(self):
+        """Markdown and journal are views over one AgentRunResult, not separate
+        truths: both must report what the result object says."""
+        from agent.loop import render_markdown, run
+
+        for d in ("logs", "reports"):
+            os.makedirs(d, exist_ok=True)
+        result = run(quiet=True)
+
+        self.assertIn(result.verdict, render_markdown(result))
+        with open(result.report_path) as f:
+            self.assertIn(result.verdict, f.read())
+        with open(result.journal_path) as f:
+            journal = [json.loads(line) for line in f if line.strip()]
+        self.assertEqual(journal, result.events)
+        self.assertEqual(len(result.history), result.weeks)
 
 
 if __name__ == "__main__":

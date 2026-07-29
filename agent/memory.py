@@ -9,6 +9,10 @@ Two stores, mirroring how production agents keep context bounded:
 
 The brain never sees raw history - only the summary. That is deliberate: an
 agent that re-reads its whole past every turn is a context leak, not a memory.
+
+Journal events are also kept in `events` so a caller can read the run without
+re-parsing the file: the JSONL on disk and the in-memory list carry the same
+records, and every view of a run is a renderer over them.
 """
 
 import json
@@ -17,6 +21,8 @@ import json
 class Memory:
     def __init__(self, journal_path):
         self.f = open(journal_path, "w")
+        self.journal_path = journal_path
+        self.events = []
         self.summary = {
             "week": 0, "mode": "baseline", "share": 0.0,
             "instrumented": False, "weeks_in_mode": 0, "weeks_at_share": 0,
@@ -28,7 +34,9 @@ class Memory:
         }
 
     def log(self, kind, **kw):
-        self.f.write(json.dumps({"kind": kind, **kw}) + "\n")
+        event = {"kind": kind, **kw}
+        self.events.append(event)
+        self.f.write(json.dumps(event) + "\n")
         self.f.flush()
 
     def note_rejection(self, action, reason):

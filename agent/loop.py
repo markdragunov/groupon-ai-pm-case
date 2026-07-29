@@ -207,9 +207,10 @@ def _final(world, mem, say, budget_exhausted=False, handoff=None):
     )
     with open(result.report_path, "w") as f:
         f.write(render_markdown(result))
-    lift = f"{cum['lift_pts']:+.1f} pts" if cum["lift_pts"] is not None else "n/a"
+    lift_line = (f"{cum['lift_pts']:+.1f} pts on n={en}"
+                 if cum["lift_pts"] is not None else "n/a (no clean live weeks)")
     say(f"\n[FINAL] {verdict}")
-    say(f"    evidence ex-incident: lift {lift} on n={en} | "
+    say(f"    evidence ex-incident: lift {lift_line} | "
         f"gates: {len(s['gate_contexts'])} | incidents: {len(s['incidents'])}")
     say(f"    full report: {result.report_path}")
     return result

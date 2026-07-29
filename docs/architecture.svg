@@ -1,0 +1,172 @@
+<svg viewBox="0 0 980 690" width="980" height="690" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#018A22"/>
+    </marker>
+    <marker id="arrg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7280"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="980" height="690" fill="#ffffff"/>
+
+  <!-- ======================= THE LOOP ======================= -->
+  <path d="M 880 30 C 880 8, 80 8, 80 30" fill="none" stroke="#6b7280" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrg)"/>
+  <text x="480" y="16" font-size="10" fill="#6b7280" text-anchor="middle" font-style="italic">every outcome feeds back as a label</text>
+
+  <g font-size="12" font-weight="bold" text-anchor="middle">
+    <rect x="15" y="30" width="130" height="28" rx="14" fill="#f0f7f1" stroke="#018A22"/>
+    <text x="80" y="48" fill="#036b1e">Observe</text>
+    <rect x="175" y="30" width="130" height="28" rx="14" fill="#f0f7f1" stroke="#018A22"/>
+    <text x="240" y="48" fill="#036b1e">Detect</text>
+    <rect x="335" y="30" width="130" height="28" rx="14" fill="#f0f7f1" stroke="#018A22"/>
+    <text x="400" y="48" fill="#036b1e">Predict</text>
+    <rect x="495" y="30" width="130" height="28" rx="14" fill="#f0f7f1" stroke="#018A22"/>
+    <text x="560" y="48" fill="#036b1e">Decide</text>
+    <rect x="655" y="30" width="130" height="28" rx="14" fill="#f0f7f1" stroke="#018A22"/>
+    <text x="720" y="48" fill="#036b1e">Recover</text>
+    <rect x="815" y="30" width="130" height="28" rx="14" fill="#f0f7f1" stroke="#018A22"/>
+    <text x="880" y="48" fill="#036b1e">Learn</text>
+  </g>
+  <g stroke="#018A22" stroke-width="1.6">
+    <line x1="147" y1="44" x2="172" y2="44" marker-end="url(#arr)"/>
+    <line x1="307" y1="44" x2="332" y2="44" marker-end="url(#arr)"/>
+    <line x1="467" y1="44" x2="492" y2="44" marker-end="url(#arr)"/>
+    <line x1="627" y1="44" x2="652" y2="44" marker-end="url(#arr)"/>
+    <line x1="787" y1="44" x2="812" y2="44" marker-end="url(#arr)"/>
+  </g>
+
+  <!-- ======================= COL A: OBSERVE ======================= -->
+  <rect x="15" y="95" width="220" height="330" rx="8" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="27" y="116" font-size="12.5" font-weight="bold" fill="#018A22">1 · OBSERVE — data &amp; labels</text>
+  <g font-size="11" fill="#1f2937">
+    <text x="27" y="140">• funnel events: starts, auth,</text>
+    <text x="38" y="154">completion — per segment</text>
+    <text x="27" y="174">• decline reason codes</text>
+    <text x="38" y="188" fill="#6b7280">(exist at processor, discarded)</text>
+    <text x="27" y="208">• redemption / refund reasons</text>
+    <text x="27" y="228">• decision_log.jsonl —</text>
+    <text x="38" y="242">one JSON line per decision:</text>
+    <text x="38" y="256" fill="#6b7280">context · allowed set · pick ·</text>
+    <text x="38" y="270" fill="#6b7280">served-by · outcome</text>
+  </g>
+  <line x1="27" y1="285" x2="223" y2="285" stroke="#e5e7eb"/>
+  <g font-size="10.5" fill="#374151">
+    <text x="27" y="304" font-weight="bold">Label maturity is the constraint:</text>
+    <text x="27" y="319">contexts kept coarse (code ×</text>
+    <text x="27" y="333">market); tender joins when volume</text>
+    <text x="27" y="347">supports it. W1–2 = rules only ⇒</text>
+    <text x="27" y="361">defaults alone earn labels —</text>
+    <text x="27" y="375">learning needs paid exploration.</text>
+  </g>
+
+  <!-- ======================= COL B: DETECT ======================= -->
+  <rect x="255" y="95" width="440" height="90" rx="8" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="267" y="116" font-size="12.5" font-weight="bold" fill="#018A22">DETECT — joint behaviour of stages, not a threshold</text>
+  <g font-size="11">
+    <text x="267" y="138" fill="#036b1e" font-weight="bold">✓</text>
+    <text x="282" y="138" fill="#1f2937">Joint divergence detector: auth ↑ while completion ↓ per segment;</text>
+    <text x="282" y="152" fill="#1f2937">cohort redemption scan → ALARM on day 2, zero eng-weeks</text>
+    <text x="267" y="172" fill="#9ca3af" font-weight="bold">✗</text>
+    <text x="282" y="172" fill="#6b7280">Naive blended-auth threshold: "improved" 95.3→95.6 — the decoy</text>
+  </g>
+
+  <!-- ======================= COL B: DECIDE (cage) ======================= -->
+  <rect x="255" y="197" width="440" height="170" rx="8" fill="#f4faf5" stroke="#374151" stroke-width="1.4" stroke-dasharray="6 4"/>
+  <text x="267" y="217" font-size="12.5" font-weight="bold" fill="#111827">2 · DECIDE — inside the deterministic cage (SAFETY_RULES)</text>
+  <text x="267" y="232" font-size="10.5" fill="#374151">bounded action space · do-not-retry list · timeout ⇒ no retry · money-state = ledger</text>
+
+  <rect x="270" y="243" width="190" height="102" rx="6" fill="#ffffff" stroke="#9ca3af"/>
+  <text x="280" y="261" font-size="11.5" font-weight="bold" fill="#1f2937">RULES_BASELINE</text>
+  <g font-size="10.5" fill="#374151">
+    <text x="280" y="278">decline code → action table</text>
+    <text x="280" y="293">serves 100% by default;</text>
+    <text x="280" y="308">it is also the fallback the</text>
+    <text x="280" y="323">kill switch reverts to</text>
+  </g>
+
+  <line x1="463" y1="294" x2="500" y2="294" stroke="#018A22" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <rect x="503" y="243" width="180" height="102" rx="6" fill="#ffffff" stroke="#018A22"/>
+  <text x="513" y="261" font-size="11.5" font-weight="bold" fill="#036b1e">BANDIT RANKER</text>
+  <g font-size="10.5" fill="#374151">
+    <text x="513" y="278">Beta posteriors per context</text>
+    <text x="513" y="293">evidence gate: ≥12 labels</text>
+    <text x="513" y="308">AND +4 pts over rules</text>
+    <text x="513" y="323">exploration ≤5%, by counter</text>
+  </g>
+  <text x="475" y="360" font-size="10.5" fill="#374151" text-anchor="middle" font-style="italic">the ranker earns traffic only by beating the table (shadow → 10% → ramp)</text>
+
+  <!-- ======================= COL B: GUARDRAILS ======================= -->
+  <rect x="255" y="377" width="440" height="48" rx="8" fill="#fdf3f1" stroke="#dba79c"/>
+  <text x="267" y="396" font-size="12" font-weight="bold" fill="#9a3412">GUARDRAILS — rolling fraud bps (tripwires gate on n ≥ 800)</text>
+  <text x="267" y="413" font-size="11" fill="#7c2d12">warn @16 → kill @18 → serving auto-reverts to RULES_BASELINE, discussion second</text>
+
+  <!-- ======================= COL C: EXECUTE ======================= -->
+  <rect x="715" y="95" width="250" height="330" rx="8" fill="#ffffff" stroke="#d1d5db"/>
+  <text x="727" y="116" font-size="12.5" font-weight="bold" fill="#018A22">3 · EXECUTE — deterministic</text>
+  <text x="727" y="131" font-size="10.5" fill="#6b7280">unchanged; AI never touches it</text>
+  <g font-size="11" fill="#1f2937">
+    <text x="727" y="155">• UI renders the top-ranked</text>
+    <text x="738" y="169">permitted action</text>
+    <text x="727" y="189">• state machine owns transitions</text>
+    <text x="727" y="209">• idempotency keys · no re-charge</text>
+    <text x="727" y="229">• money-state asserted from</text>
+    <text x="738" y="243">the ledger, never generated</text>
+    <text x="727" y="263">• auto-refund policy for</text>
+    <text x="738" y="277">failed-after-charge</text>
+    <text x="727" y="297">• every pick asserted against</text>
+    <text x="738" y="311">the allowed set in code —</text>
+    <text x="738" y="325" fill="#6b7280">a violation crashes the run</text>
+  </g>
+
+  <!-- flow arrows between columns -->
+  <line x1="235" y1="260" x2="252" y2="260" stroke="#018A22" stroke-width="1.8" marker-end="url(#arr)"/>
+  <line x1="695" y1="282" x2="712" y2="282" stroke="#018A22" stroke-width="1.8" marker-end="url(#arr)"/>
+  <text x="704" y="272" font-size="9.5" fill="#036b1e" text-anchor="middle">rank</text>
+
+  <!-- LEARN feedback -->
+  <path d="M 840 425 L 840 448 L 125 448 L 125 428" fill="none" stroke="#6b7280" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#arrg)"/>
+  <text x="480" y="462" font-size="10.5" fill="#4b5563" text-anchor="middle" font-style="italic">LEARN — every served outcome updates posteriors and the label store</text>
+
+  <!-- ======================= PM OPS STRIP ======================= -->
+  <rect x="15" y="478" width="950" height="160" rx="8" fill="#fafaf8" stroke="#d1d5db"/>
+  <text x="27" y="499" font-size="12.5" font-weight="bold" fill="#111827">The same pattern as the 90-day operating system — pm_ops (post-purchase funnel)</text>
+
+  <rect x="35" y="512" width="280" height="108" rx="6" fill="#ffffff" stroke="#9ca3af"/>
+  <text x="45" y="530" font-size="11.5" font-weight="bold" fill="#018A22">DAY 30 · AUDIT</text>
+  <g font-size="10.5" fill="#374151">
+    <text x="45" y="548">cohort divergence scan — blended stable,</text>
+    <text x="45" y="562">one cohort −21 pts (the same trap)</text>
+    <text x="45" y="576">detection lag: signal day 10, refund day 18</text>
+    <text x="45" y="590">top-3 levers, each with a falsifying check</text>
+    <text x="45" y="606" fill="#6b7280">→ names the unacted AI leverage point</text>
+  </g>
+
+  <line x1="318" y1="566" x2="340" y2="566" stroke="#018A22" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <rect x="343" y="512" width="280" height="108" rx="6" fill="#ffffff" stroke="#9ca3af"/>
+  <text x="353" y="530" font-size="11.5" font-weight="bold" fill="#018A22">DAY 60 · EXPERIMENT</text>
+  <g font-size="10.5" fill="#374151">
+    <text x="353" y="548">pre-registration before any data:</text>
+    <text x="353" y="562">hypothesis · power (n/arm) · ship/iterate/kill</text>
+    <text x="353" y="576">instrumentation gate — FAILS first,</text>
+    <text x="353" y="590">blocks launch until events exist</text>
+    <text x="353" y="606" fill="#6b7280">→ "confirmed before launch" as code</text>
+  </g>
+
+  <line x1="626" y1="566" x2="648" y2="566" stroke="#018A22" stroke-width="1.6" marker-end="url(#arr)"/>
+
+  <rect x="651" y="512" width="290" height="108" rx="6" fill="#ffffff" stroke="#9ca3af"/>
+  <text x="661" y="530" font-size="11.5" font-weight="bold" fill="#018A22">DAY 90 · READOUT</text>
+  <g font-size="10.5" fill="#374151">
+    <text x="661" y="548">scored against pre-registered rule only</text>
+    <text x="661" y="562">why-decomposition: lift lands where the</text>
+    <text x="661" y="576">Day-30 mechanism predicted (+8.2 / +2.9)</text>
+    <text x="661" y="590">2Q roadmap: every item ships its labels</text>
+    <text x="661" y="606" fill="#6b7280">and its guardrail — the engine grows</text>
+  </g>
+
+  <!-- footer principle -->
+  <text x="490" y="668" font-size="12" fill="#111827" text-anchor="middle" font-style="italic" font-weight="bold">AI proposes — the ledger disposes: the model ranks within the allowed set; execution, money-state and refunds stay deterministic.</text>
+</svg>

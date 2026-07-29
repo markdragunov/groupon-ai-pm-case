@@ -1,15 +1,30 @@
 # AI Recovery Engine
 
-> One product idea, three executable maturity levels: **fix a payment-funnel leak → run a PM's first 90 days as a system → let an agent operate the rollout loop** — with safety invariants that never move.
+[![demos](https://github.com/markdragunov/groupon-ai-pm-case/actions/workflows/demo.yml/badge.svg)](https://github.com/markdragunov/groupon-ai-pm-case/actions/workflows/demo.yml)
+![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
+![License: MIT](https://img.shields.io/badge/license-MIT-green)
+![Dependencies](https://img.shields.io/badge/dependencies-stdlib%20only-lightgrey)
+
+> One product idea, three executable maturity levels: **fix a payment-funnel leak → run a PM's first 90 days as a system → let an agent operate the rollout loop**  with safety invariants that never move.
 > Built as the working companion to a Groupon Senior AI PM case study (Checkout & Payments).
+
+> **Disclaimer:** Personal open-source project for learning and portfolio purposes. Not affiliated with, endorsed by, or representing Groupon or any employer.
 
 `Python 3.10+` · `zero dependencies (stdlib only)` · `seeded & fully reproducible` · `each run < 5 seconds` · `MIT`
 
-**What this is.** An executable method, not a payments demo. The domain here is checkout recovery; the product is the decision discipline — how a senior PM introduces AI into a mission-critical system without granting it authority it has not earned.
+**What this is.** An executable method, not a payments demo. The domain here is checkout recovery; the product is the decision discipline  how a senior PM introduces AI into a mission-critical system without granting it authority it has not earned.
 
 **Why it exists.** Most AI adoption fails in one of two ways: the model gets authority before evidence, or the organization never learns because nothing is instrumented. This repo demonstrates the narrow path between the two, as running code.
 
-**Who it is for.** Product managers and engineers who need AI inside a money path — and want the adoption pattern, not the hype. Payments is the worked example; the pattern transfers to any funnel where a wrong automated decision costs money or trust.
+**Who it is for.** Product managers and engineers who need AI inside a money path and want the adoption pattern, not the hype. Payments is the worked example; the pattern transfers to any funnel where a wrong automated decision costs money or trust.
+
+**For reviewers** — three commands, expected outcomes:
+
+```bash
+python3 run_v0_engine.py      # → pre-committed verdict + logs/decision_log.jsonl
+python3 run_v1_product_ops.py   # → reports/day60_experiment_spec.md, day90_readout.md
+python3 run_v2_agent.py         # → SHIP verdict + logs/agent_journal.jsonl
+```
 
 **Contents:** [Quickstart](#quickstart) · [Maturity ladder](#the-maturity-ladder) · [Architecture](#architecture) · [How the agent operates](#how-the-agent-operates) · [The three levels](#the-three-levels-in-detail) · [Design principles](#design-principles) · [PM decision log](#the-pm-decision-log) · [Break it on purpose](#break-it-on-purpose) · [Honesty & limits](#honesty--limits)
 
@@ -25,6 +40,7 @@ Each run is seeded, needs nothing installed, finishes in seconds, and writes its
 
 ## The maturity ladder
 
+![Maturity ladder](docs/maturity_ladder.svg)
 
 | Level | What decision gets automated | Horizon | The limitation that creates the next level |
 |---|---|---|---|
@@ -33,15 +49,17 @@ Each run is seeded, needs nothing installed, finishes in seconds, and writes its
 | **v2 · Agent** | when to instrument, shadow, ramp, freeze, escalate — operating the rollout | quarters | one funnel, simulated approvals, heuristic brain by default |
 | *v3 · Platform* | *multi-funnel, real approval workflow* | — | **deliberately not built** — naming the next rung without building it is the "do not grow sideways" decision, kept |
 
-**The invariant at every level:** deterministic execution, bounded action spaces, evidence gates, and a human owning irreversible risk. Levels are **layers, not successors** — v2 contains v0 unchanged; what grows is only the scope of the decision inside the cage.
+**The invariant at every level:** deterministic execution, bounded action spaces, evidence gates, and a human owning irreversible risk. Levels are **layers, not successors** — v2 contains v0 unchanged; what grows is only the scope of the decision inside the cage. (v0 / v1 / v2 denote **maturity levels**, not semver releases.)
 
 ## Architecture
 
 **v0 — the engine.** A failed payment enters the deterministic cage: `SAFETY_RULES` defines the permitted actions for its decline context (do-not-retry list, no retry on unresolved timeouts, money-state from the ledger). Inside the cage, two competitors rank the permitted set: a rules lookup table that serves by default, and a bandit that may disagree only after clearing an evidence gate. Every outcome becomes a label; fraud tripwires auto-revert serving to rules.
 
+![v0 architecture](docs/architecture.svg)
 
 **v2 — the agent.** The same cage, one level up. The agent replaces the human *operator* of the rollout — never the engine. Its only lever is the serving mode (baseline / shadow / live-at-share / frozen); safety rules are untouchable by anything that learns. A verifier gates every move, safety overrides fire regardless of the brain, and resuming after a kill requires a human approval the agent cannot forge.
 
+![v2 architecture](docs/architecture_v2.svg)
 
 ## How the agent operates
 
@@ -182,10 +200,20 @@ The tunables are the product decisions — change one, rerun, and watch the syst
 - [docs/](docs/) — architecture.svg (v0) · architecture_v2.svg (v2) · maturity_ladder.svg
 - `reports/`, `logs/`, `data/` — generated on run
 
-## Philosophy
+## Honesty & limits
 
-1. Synthetic data is not a shortcut.It is an explicit design choice.
+All data is **synthetic and seeded**; the funnel break, the interaction pockets and the fraud spike are *planted* so the mechanisms can be demonstrated end-to-end. This repo proves **method, not findings** — the first real run belongs on real telemetry, and its week-one job is to falsify the planted assumptions. Known limits, stated rather than hidden: one funnel; simulated human review; a heuristic brain by default; offline evaluation of counterfactuals is only exact here because the simulator is omniscient — in production that is precisely what the exploration budget pays for.
+
+**On synthetic data:**
+
+1. Synthetic data is not a shortcut — it is an explicit design choice.
 2. The simulator exists to validate decision-making, not to validate business outcomes.
 3. Every pattern in the simulator is intentionally planted.
 4. The first production deployment is expected to falsify those assumptions.
 5. If production behaves exactly like the simulator, the simulator was probably unrealistic.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Security reports: [SECURITY.md](SECURITY.md). Release history: [CHANGELOG.md](CHANGELOG.md).
+
+License: [MIT](LICENSE).

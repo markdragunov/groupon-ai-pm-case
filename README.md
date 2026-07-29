@@ -202,7 +202,7 @@ The tunables are the product decisions — change one, rerun, and watch the syst
 
 ## Honesty & limits
 
-All data is **synthetic and seeded**; the funnel break, the interaction pockets and the fraud spike are *planted* so the mechanisms can be demonstrated end-to-end. This repo proves **method, not findings** — the first real run belongs on real telemetry, and its week-one job is to falsify the planted assumptions. Known limits, stated rather than hidden: one funnel; simulated human review; a heuristic brain by default; offline evaluation of counterfactuals is only exact here because the simulator is omniscient — in production that is precisely what the exploration budget pays for.
+All data is **synthetic and seeded**; the funnel break, the interaction pockets and the fraud spike are *planted* so the mechanisms can be demonstrated end-to-end. This repo proves **method, not findings** the first real run belongs on real telemetry and its week-one job is to falsify the planted assumptions. Known limits, stated rather than hidden one funnel; simulated human review; a heuristic brain by default; offline evaluation of counterfactuals is only exact here because the simulator is omniscient in production that is precisely what the exploration budget pays for.
 
 **On synthetic data:**
 

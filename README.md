@@ -25,7 +25,6 @@ Each run is seeded, needs nothing installed, finishes in seconds, and writes its
 
 ## The maturity ladder
 
-![Maturity ladder](docs/maturity_ladder.svg)
 
 | Level | What decision gets automated | Horizon | The limitation that creates the next level |
 |---|---|---|---|
@@ -183,8 +182,10 @@ The tunables are the product decisions — change one, rerun, and watch the syst
 - [docs/](docs/) — architecture.svg (v0) · architecture_v2.svg (v2) · maturity_ladder.svg
 - `reports/`, `logs/`, `data/` — generated on run
 
-## Honesty & limits
+## Philosophy
 
-All data is **synthetic and seeded**; the funnel break, the interaction pockets and the fraud spike are *planted* so the mechanisms can be demonstrated end-to-end. This repo proves **method, not findings** — the first real run belongs on real telemetry, and its week-one job is to falsify the planted assumptions. Known limits, stated rather than hidden: one funnel; simulated human review; a heuristic brain by default; offline evaluation of counterfactuals is only exact here because the simulator is omniscient — in production that is precisely what the exploration budget pays for.
-
-License: MIT.
+1. Synthetic data is not a shortcut.It is an explicit design choice.
+2. The simulator exists to validate decision-making, not to validate business outcomes.
+3. Every pattern in the simulator is intentionally planted.
+4. The first production deployment is expected to falsify those assumptions.
+5. If production behaves exactly like the simulator, the simulator was probably unrealistic.

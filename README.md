@@ -5,18 +5,18 @@
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 ![Dependencies](https://img.shields.io/badge/dependencies-stdlib%20only-lightgrey)
 
-> One product idea, three executable maturity levels: **fix a payment-funnel leak → run a PM's first 90 days as a system → let an agent operate the rollout loop** — with safety invariants that never move.
+> One product idea, three executable maturity levels: **fix a payment-funnel leak → run a PM's first 90 days as a system → let an agent operate the rollout loop**  with safety invariants that never move.
 > Built as the working companion to a Groupon Senior AI PM case study (Checkout & Payments).
 
 > **Disclaimer:** Personal open-source project for learning and portfolio purposes. Not affiliated with, endorsed by, or representing Groupon or any employer.
 
 `Python 3.10+` · `zero dependencies (stdlib only)` · `seeded & fully reproducible` · `each run < 5 seconds` · `MIT`
 
-**What this is.** An executable method, not a payments demo. The domain here is checkout recovery; the product is the decision discipline — how a senior PM introduces AI into a mission-critical system without granting it authority it has not earned.
+**What this is.** An executable method, not a payments demo. The domain here is checkout recovery; the product is the decision discipline  how a senior PM introduces AI into a mission-critical system without granting it authority it has not earned.
 
 **Why it exists.** Most AI adoption fails in one of two ways: the model gets authority before evidence, or the organization never learns because nothing is instrumented. This repo demonstrates the narrow path between the two, as running code.
 
-**Who it is for.** Product managers and engineers who need AI inside a money path — and want the adoption pattern, not the hype. Payments is the worked example; the pattern transfers to any funnel where a wrong automated decision costs money or trust.
+**Who it is for.** Product managers and engineers who need AI inside a money path and want the adoption pattern, not the hype. Payments is the worked example; the pattern transfers to any funnel where a wrong automated decision costs money or trust.
 
 **For reviewers** — three commands, expected outcomes:
 

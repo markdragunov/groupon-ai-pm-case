@@ -62,7 +62,7 @@ class HeuristicBrain:
 class ClaudeBrain:
     """LLM decide-step. Same contract, same cage. Requires ANTHROPIC_API_KEY."""
     name = "claude"
-    MODEL = "claude-sonnet-4-6"
+    MODEL = "claude-opus-5"
 
     def __init__(self):
         self.key = os.environ.get("ANTHROPIC_API_KEY")
@@ -80,7 +80,12 @@ class ClaudeBrain:
             "Reply with STRICT JSON only: "
             '{"action": str, "params": {"share": float (ramp/resume only)}, "why": str}'
         )
-        body = json.dumps({"model": self.MODEL, "max_tokens": 300,
+        # Opus 5 thinks by default and max_tokens caps thinking + reply TOGETHER,
+        # so the 300 that sufficed for a JSON-only reply would truncate the answer
+        # and send every week down the fallback path. Low effort keeps the cost of
+        # that headroom near zero: this is a one-action pick, not a reasoning task.
+        body = json.dumps({"model": self.MODEL, "max_tokens": 2048,
+                           "output_config": {"effort": "low"},
                            "messages": [{"role": "user", "content": prompt}]}).encode()
         req = urllib.request.Request(
             "https://api.anthropic.com/v1/messages", data=body,
